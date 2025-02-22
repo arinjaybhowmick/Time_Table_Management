@@ -34,7 +34,7 @@ public class PeriodService {
         return optionalPeriod.map(PeriodMapper::toDTO);
     }
 
-    public PeriodDTO create(PeriodDTO perioddto) throws InvalidAttributeValueException, ConstraintViolationException {
+    public PeriodDTO create(PeriodDTO perioddto) throws InvalidAttributeValueException {
         String msg = validatePeriod(perioddto);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
@@ -49,7 +49,7 @@ public class PeriodService {
         return PeriodMapper.toDTO(period);
     }
 
-    public PeriodDTO update(Short id, PeriodDTO perioddto) throws InvalidAttributeValueException, ConstraintViolationException {
+    public PeriodDTO update(Short id, PeriodDTO perioddto) throws InvalidAttributeValueException {
         String msg = validatePeriod(perioddto);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);

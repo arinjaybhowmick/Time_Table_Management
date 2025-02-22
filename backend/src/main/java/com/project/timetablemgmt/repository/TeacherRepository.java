@@ -6,4 +6,5 @@ import com.project.timetablemgmt.entity.Teacher;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
+    Teacher findByShortName(String shortName);
 }

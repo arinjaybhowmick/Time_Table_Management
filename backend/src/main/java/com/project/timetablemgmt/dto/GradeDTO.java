@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GradeDTO {
-    private String standard;
-    private String section;
+    private String className;
     private Short strength;
-    private TeacherDTO teacherDTO;
+    private String teacherShortName;
 }

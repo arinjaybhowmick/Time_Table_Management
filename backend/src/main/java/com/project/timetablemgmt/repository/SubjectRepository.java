@@ -6,4 +6,5 @@ import com.project.timetablemgmt.entity.Subject;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
+    Subject findByCode(String code);
 }

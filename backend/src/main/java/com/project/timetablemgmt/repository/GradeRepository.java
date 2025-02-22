@@ -6,4 +6,5 @@ import com.project.timetablemgmt.entity.Grade;
 
 public interface GradeRepository extends JpaRepository<Grade, Long> {
 
+    Grade findByClassName(String className);
 }

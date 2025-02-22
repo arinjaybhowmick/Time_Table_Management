@@ -34,7 +34,7 @@ public class DayService {
         return optionalDay.map(DayMapper::toDTO);
     }
 
-    public DayDTO create(DayDTO daydto) throws InvalidAttributeValueException, ConstraintViolationException {
+    public DayDTO create(DayDTO daydto) throws InvalidAttributeValueException {
         String msg = validateDay(daydto);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
@@ -49,7 +49,7 @@ public class DayService {
         return DayMapper.toDTO(day);
     }
 
-    public DayDTO update(Short id, DayDTO daydto) throws InvalidAttributeValueException, ConstraintViolationException {
+    public DayDTO update(Short id, DayDTO daydto) throws InvalidAttributeValueException {
         String msg = validateDay(daydto);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);

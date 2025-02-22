@@ -72,7 +72,8 @@ public class TeacherService {
     }
 
     private String validateTeacher(TeacherDTO teacherDTO) {
-        
+        if (!teacherDTO.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})*$"))
+            return "Invalid email format";
         return null;
     }
 }

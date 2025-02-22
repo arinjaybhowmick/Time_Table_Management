@@ -11,63 +11,80 @@ import org.springframework.stereotype.Service;
 
 import com.project.timetablemgmt.dto.GradeDTO;
 import com.project.timetablemgmt.entity.Grade;
+import com.project.timetablemgmt.entity.Teacher;
 import com.project.timetablemgmt.mapper.GradeMapper;
 import com.project.timetablemgmt.repository.GradeRepository;
+import com.project.timetablemgmt.repository.TeacherRepository;
 
-import jakarta.validation.ConstraintViolationException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class GradeService {
     
     @Autowired
-    private GradeRepository repository;
+    private GradeRepository gradeRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     public List<GradeDTO> getAll() {
-        List<Grade> grades = repository.findAll();
+        List<Grade> grades = gradeRepository.findAll();
         return grades.stream()
                    .map(GradeMapper::toDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<GradeDTO> getById(Long id) {
-        Optional<Grade> optionalGrade = repository.findById(id);
+        Optional<Grade> optionalGrade = gradeRepository.findById(id);
         return optionalGrade.map(GradeMapper::toDTO);
     }
 
-    public GradeDTO create(GradeDTO gradeDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public GradeDTO create(GradeDTO gradeDTO) throws InvalidAttributeValueException {
         String msg = validateGrade(gradeDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
 
-        Grade grade = GradeMapper.toEntity(gradeDTO);
+        Grade grade;
+        
         try{
-            grade = repository.save(grade);
+            
+            Teacher teacher = (!gradeDTO.getTeacherShortName().isEmpty()) ? 
+                                teacherRepository.findByShortName(gradeDTO.getTeacherShortName()) : null;
+
+            grade = GradeMapper.toEntity(gradeDTO, teacher);
+            grade = gradeRepository.save(grade);
         }
         catch(Exception ex){
-            throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
+            throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
         return GradeMapper.toDTO(grade);
     }
 
-    public GradeDTO update(Long id, GradeDTO gradeDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public GradeDTO update(Long id, GradeDTO gradeDTO) throws InvalidAttributeValueException {
         String msg = validateGrade(gradeDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Grade grade = GradeMapper.toEntity(gradeDTO);    
-        grade.setId(id);
+        Grade grade;    
+        
         try{
-            grade = repository.save(grade);
+            Teacher teacher = (!gradeDTO.getTeacherShortName().isEmpty()) ? 
+                                teacherRepository.findByShortName(gradeDTO.getTeacherShortName()) : null;
+
+            grade = GradeMapper.toEntity(gradeDTO, teacher);
+            grade.setId(id);
+
+            grade = gradeRepository.save(grade);
         }
         catch(Exception ex){
-            throw new ConstraintViolationException(ex.getMessage(), null);
+            throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
         return GradeMapper.toDTO(grade);
     }
 
     public GradeDTO delete(Long id) {
         GradeDTO gradeDTO = getById(id).orElse(null);
-        repository.deleteById(id);
+        gradeRepository.deleteById(id);
         return gradeDTO;
     }
 

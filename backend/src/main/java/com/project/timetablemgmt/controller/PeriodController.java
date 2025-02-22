@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.timetablemgmt.dto.PeriodDTO;
 import com.project.timetablemgmt.service.PeriodService;
 
-import jakarta.validation.ConstraintViolationException;
-
 @RestController
 @RequestMapping("/api/period")
 public class PeriodController {
@@ -43,13 +41,13 @@ public class PeriodController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PeriodDTO> create(@RequestBody PeriodDTO period) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<PeriodDTO> create(@RequestBody PeriodDTO period) throws InvalidAttributeValueException {
         PeriodDTO createdPeriod = service.create(period);
         return new ResponseEntity<>(createdPeriod, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PeriodDTO> update(@PathVariable Short id, @RequestBody PeriodDTO period) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<PeriodDTO> update(@PathVariable Short id, @RequestBody PeriodDTO period) throws InvalidAttributeValueException {
         PeriodDTO updatedPeriod = service.update(id, period);
         return new ResponseEntity<>(updatedPeriod, HttpStatus.OK);
     }

@@ -6,4 +6,5 @@ import com.project.timetablemgmt.entity.Room;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
+    Room findByRoomNumber(String roomNumber);
 }

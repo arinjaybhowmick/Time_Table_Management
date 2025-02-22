@@ -10,64 +10,82 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.timetablemgmt.dto.RoomDTO;
+import com.project.timetablemgmt.entity.Grade;
 import com.project.timetablemgmt.entity.Room;
 import com.project.timetablemgmt.mapper.RoomMapper;
+import com.project.timetablemgmt.repository.GradeRepository;
 import com.project.timetablemgmt.repository.RoomRepository;
 
-import jakarta.validation.ConstraintViolationException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class RoomService {
     
     @Autowired
-    private RoomRepository repository;
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private GradeRepository gradeRepository;
 
     public List<RoomDTO> getAll() {
-        List<Room> rooms = repository.findAll();
+        List<Room> rooms = roomRepository.findAll();
         return rooms.stream()
                    .map(RoomMapper::toDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<RoomDTO> getById(Long id) {
-        Optional<Room> optionalRoom = repository.findById(id);
+        Optional<Room> optionalRoom = roomRepository.findById(id);
         return optionalRoom.map(RoomMapper::toDTO);
     }
 
-    public RoomDTO create(RoomDTO roomDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public RoomDTO create(RoomDTO roomDTO) throws InvalidAttributeValueException {
         String msg = validateRoom(roomDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
 
-        Room room = RoomMapper.toEntity(roomDTO);
+        Room room;
+
         try{
-            room = repository.save(room);
+
+            Grade grade = (!roomDTO.getClassName().isEmpty()) ? 
+                                gradeRepository.findByClassName(roomDTO.getClassName()) : null;
+
+            room = RoomMapper.toEntity(roomDTO,grade);
+            room = roomRepository.save(room);
         }
         catch(Exception ex){
-            throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
+            throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
         return RoomMapper.toDTO(room);
     }
 
-    public RoomDTO update(Long id, RoomDTO roomDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public RoomDTO update(Long id, RoomDTO roomDTO) throws InvalidAttributeValueException {
         String msg = validateRoom(roomDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Room room = RoomMapper.toEntity(roomDTO);    
-        room.setId(id);
+        Room room;    
+        
         try{
-            room = repository.save(room);
+
+            Grade grade = (!roomDTO.getClassName().isEmpty()) ? 
+                                gradeRepository.findByClassName(roomDTO.getClassName()) : null;
+
+            room = RoomMapper.toEntity(roomDTO,grade);
+            room.setId(id);
+
+            room = roomRepository.save(room);
         }
         catch(Exception ex){
-            throw new ConstraintViolationException(ex.getMessage(), null);
+            throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
         return RoomMapper.toDTO(room);
     }
 
     public RoomDTO delete(Long id) {
         RoomDTO roomDTO = getById(id).orElse(null);
-        repository.deleteById(id);
+        roomRepository.deleteById(id);
         return roomDTO;
     }
 

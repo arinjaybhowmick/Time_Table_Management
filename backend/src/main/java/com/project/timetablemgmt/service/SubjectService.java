@@ -34,7 +34,7 @@ public class SubjectService {
         return optionalSubject.map(SubjectMapper::toDTO);
     }
 
-    public SubjectDTO create(SubjectDTO subjectDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public SubjectDTO create(SubjectDTO subjectDTO) throws InvalidAttributeValueException {
         String msg = validateSubject(subjectDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
@@ -49,7 +49,7 @@ public class SubjectService {
         return SubjectMapper.toDTO(subject);
     }
 
-    public SubjectDTO update(Long id, SubjectDTO subjectDTO) throws InvalidAttributeValueException, ConstraintViolationException {
+    public SubjectDTO update(Long id, SubjectDTO subjectDTO) throws InvalidAttributeValueException {
         String msg = validateSubject(subjectDTO);
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);

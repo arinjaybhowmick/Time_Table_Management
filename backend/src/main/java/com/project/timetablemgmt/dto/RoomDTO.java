@@ -11,5 +11,5 @@ public class RoomDTO {
     private String roomNumber;
     private String displayName;
     private Short capacity;
-    private GradeDTO gradeDTO;
+    private String className;
 }

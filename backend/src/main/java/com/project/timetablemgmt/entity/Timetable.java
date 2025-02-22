@@ -39,6 +39,6 @@ public class Timetable {
     private Grade grade;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id", nullable = true)
-    private Teacher teacher;
+    @JoinColumn(name = "teaches_id", nullable = true)
+    private Teaches teaches;
 }

@@ -6,4 +6,5 @@ import com.project.timetablemgmt.entity.Day;
 
 public interface DayRepository extends JpaRepository<Day, Short> {
     
+    Day findByShortName(String shortName);
 }

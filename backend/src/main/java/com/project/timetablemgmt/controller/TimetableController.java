@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.timetablemgmt.dto.TimetableDTO;
 import com.project.timetablemgmt.service.TimetableService;
 
-import jakarta.validation.ConstraintViolationException;
-
 @RestController
 @RequestMapping("/api/timetable")
 public class TimetableController {
@@ -43,13 +41,13 @@ public class TimetableController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TimetableDTO> create(@RequestBody TimetableDTO timetable) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<TimetableDTO> create(@RequestBody TimetableDTO timetable) throws InvalidAttributeValueException {
         TimetableDTO createdTimetable = service.create(timetable);
         return new ResponseEntity<>(createdTimetable, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<TimetableDTO> update(@PathVariable Long id, @RequestBody TimetableDTO timetable) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<TimetableDTO> update(@PathVariable Long id, @RequestBody TimetableDTO timetable) throws InvalidAttributeValueException {
         TimetableDTO updatedTimetable = service.update(id, timetable);
         return new ResponseEntity<>(updatedTimetable, HttpStatus.OK);
     }

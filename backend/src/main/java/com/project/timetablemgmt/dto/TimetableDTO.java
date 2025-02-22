@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TimetableDTO {
-    private DayDTO dayDTO;
-    private PeriodDTO periodDTO;
-    private RoomDTO roomDTO;
-    private GradeDTO gradeDTO;
-    private TeacherDTO teacherDTO;
+    private String dayShortName;
+    private String periodNumber;
+    private String roomNumber;
+    private String className;
+    private String teacherShortName;
+    private String subjectCode;
 }

@@ -2,23 +2,25 @@ package com.project.timetablemgmt.mapper;
 
 import com.project.timetablemgmt.dto.GradeDTO;
 import com.project.timetablemgmt.entity.Grade;
+import com.project.timetablemgmt.entity.Teacher;
 
 public class GradeMapper {
     public static GradeDTO toDTO(Grade grade) {
         GradeDTO gradeDTO = new GradeDTO();
-        gradeDTO.setStandard(grade.getStandard());
-        gradeDTO.setSection(grade.getSection());
+        gradeDTO.setClassName(grade.getClassName());
         gradeDTO.setStrength(grade.getStrength());
-        gradeDTO.setTeacherDTO(TeacherMapper.toDTO(grade.getTeacher()));
+
+        if (grade.getTeacher() != null)
+            gradeDTO.setTeacherShortName(grade.getTeacher().getShortName());
+            
         return gradeDTO;
     }
 
-    public static Grade toEntity(GradeDTO gradeDTO) {
+    public static Grade toEntity(GradeDTO gradeDTO, Teacher teacher) {
         Grade grade = new Grade();
-        grade.setStandard(gradeDTO.getStandard());
-        grade.setSection(gradeDTO.getSection());
+        grade.setClassName(gradeDTO.getClassName());
         grade.setStrength(gradeDTO.getStrength());
-        grade.setTeacher(TeacherMapper.toEntity(gradeDTO.getTeacherDTO()));
+        grade.setTeacher(teacher);
         return grade;
     }
 }

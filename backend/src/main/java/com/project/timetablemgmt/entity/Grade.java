@@ -23,11 +23,8 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "standard", length = 15, nullable = false, unique = true)
-    private String standard;
-
-    @Column(name = "section", length = 5, nullable = false)
-    private String section;
+    @Column(name = "class_name", length = 15, nullable = false, unique = true)
+    private String className;
 
     @Column(name = "strength", nullable = false)
     private Short strength;

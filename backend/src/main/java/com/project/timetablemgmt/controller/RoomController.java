@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.timetablemgmt.dto.RoomDTO;
 import com.project.timetablemgmt.service.RoomService;
 
-import jakarta.validation.ConstraintViolationException;
-
 @RestController
 @RequestMapping("/api/room")
 public class RoomController {
@@ -43,13 +41,13 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<RoomDTO> create(@RequestBody RoomDTO room) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<RoomDTO> create(@RequestBody RoomDTO room) throws InvalidAttributeValueException {
         RoomDTO createdRoom = service.create(room);
         return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<RoomDTO> update(@PathVariable Long id, @RequestBody RoomDTO room) throws InvalidAttributeValueException, ConstraintViolationException {
+    public ResponseEntity<RoomDTO> update(@PathVariable Long id, @RequestBody RoomDTO room) throws InvalidAttributeValueException {
         RoomDTO updatedRoom = service.update(id, room);
         return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
     }

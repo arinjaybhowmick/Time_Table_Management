@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeachesDTO {
-    private TeacherDTO teacherDTO;
-    private SubjectDTO subjectDTO;
+    private String teacherShortName;
+    private String subjectCode;
 }
