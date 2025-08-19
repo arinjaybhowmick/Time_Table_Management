@@ -27,7 +27,12 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     private String apiKey;
 
     @Override
-    @SuppressWarnings("null")
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/public/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
         throws ServletException, IOException {
 

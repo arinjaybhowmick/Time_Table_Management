@@ -24,6 +24,7 @@ public class SecurityConfiguration {
         return http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions().sameOrigin())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .securityMatcher("/**")
