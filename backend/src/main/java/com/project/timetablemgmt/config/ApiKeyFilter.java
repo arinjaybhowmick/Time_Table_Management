@@ -26,8 +26,16 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Value("${api.key}")
     private String apiKey;
 
+    @Value("${spring.h2.console.path}")
+    private String h2Path;
+
     @Override
-    @SuppressWarnings("null")
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith(h2Path) || path.startsWith(h2Path + "/");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
         throws ServletException, IOException {
 

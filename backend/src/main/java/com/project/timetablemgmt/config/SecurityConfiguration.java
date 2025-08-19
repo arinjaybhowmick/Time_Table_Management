@@ -1,5 +1,6 @@
 package com.project.timetablemgmt.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,16 +20,21 @@ public class SecurityConfiguration {
 
     private final ApiKeyFilter apiKeyFilter;
 
+    @Value("${spring.h2.console.path}")
+    private String h2Path;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions().sameOrigin())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .securityMatcher("/**")
                 .authorizeHttpRequests(registry -> registry
                         .requestMatchers( AntPathRequestMatcher.antMatcher("/public/**") ).permitAll()
+                        .requestMatchers( AntPathRequestMatcher.antMatcher(h2Path + "/**") ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
