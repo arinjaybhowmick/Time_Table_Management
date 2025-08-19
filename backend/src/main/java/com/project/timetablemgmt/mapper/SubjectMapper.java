@@ -1,24 +1,16 @@
 package com.project.timetablemgmt.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.project.timetablemgmt.dto.SubjectDTO;
 import com.project.timetablemgmt.entity.Subject;
+import com.project.timetablemgmt.framework.AbstractMapper;
 
-public class SubjectMapper {
-    public static SubjectDTO toDTO(Subject subject) {
-        SubjectDTO subjectDTO = new SubjectDTO();
-        subjectDTO.setCode(subject.getCode());
-        subjectDTO.setName(subject.getName());
-        subjectDTO.setOptional(subject.getOptional());
-        subjectDTO.setPeriods(subject.getPeriods());
-        return subjectDTO;
+@Component
+public class SubjectMapper extends AbstractMapper<SubjectDTO, Subject> {
+
+    public SubjectMapper() {
+        super(SubjectDTO.class, Subject.class);
     }
 
-    public static Subject toEntity(SubjectDTO subjectDTO) {
-        Subject subject = new Subject();
-        subject.setCode(subjectDTO.getCode());
-        subject.setName(subjectDTO.getName());
-        subject.setOptional(subjectDTO.getOptional());
-        subject.setPeriods(subjectDTO.getPeriods());
-        return subject;
-    }
 }

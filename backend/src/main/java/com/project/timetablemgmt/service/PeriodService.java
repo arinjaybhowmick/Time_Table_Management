@@ -22,16 +22,19 @@ public class PeriodService {
     @Autowired
     private PeriodRepository repository;
 
+    @Autowired
+    private PeriodMapper periodMapper;
+
     public List<PeriodDTO> getAll() {
         List<Period> periods = repository.findAll();
         return periods.stream()
-                   .map(PeriodMapper::toDTO)
+                   .map(periodMapper::convertEntitytoDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<PeriodDTO> getById(Short id) {
         Optional<Period> optionalPeriod = repository.findById(id);
-        return optionalPeriod.map(PeriodMapper::toDTO);
+        return optionalPeriod.map(periodMapper::convertEntitytoDTO);
     }
 
     public PeriodDTO create(PeriodDTO perioddto) throws InvalidAttributeValueException {
@@ -39,14 +42,14 @@ public class PeriodService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Period period = PeriodMapper.toEntity(perioddto);
+        Period period = periodMapper.convertDTOtoEntity(perioddto);
         try{
             period = repository.save(period);
         }
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
         }
-        return PeriodMapper.toDTO(period);
+        return periodMapper.convertEntitytoDTO(period);
     }
 
     public PeriodDTO update(Short id, PeriodDTO perioddto) throws InvalidAttributeValueException {
@@ -54,7 +57,7 @@ public class PeriodService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
             
-        Period period = PeriodMapper.toEntity(perioddto);    
+        Period period = periodMapper.convertDTOtoEntity(perioddto);    
         period.setId(id);
         try{
             period = repository.save(period);
@@ -62,7 +65,7 @@ public class PeriodService {
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getMessage(), null);
         }
-        return PeriodMapper.toDTO(period);
+        return periodMapper.convertEntitytoDTO(period);
     }
 
     public PeriodDTO delete(Short id) {

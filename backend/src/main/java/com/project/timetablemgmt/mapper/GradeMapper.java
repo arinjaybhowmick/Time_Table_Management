@@ -1,26 +1,37 @@
 package com.project.timetablemgmt.mapper;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.project.timetablemgmt.dto.GradeDTO;
 import com.project.timetablemgmt.entity.Grade;
-import com.project.timetablemgmt.entity.Teacher;
+import com.project.timetablemgmt.framework.AbstractMapper;
+import com.project.timetablemgmt.repository.TeacherRepository;
 
-public class GradeMapper {
-    public static GradeDTO toDTO(Grade grade) {
-        GradeDTO gradeDTO = new GradeDTO();
-        gradeDTO.setClassName(grade.getClassName());
-        gradeDTO.setStrength(grade.getStrength());
+@Component
+public class GradeMapper extends AbstractMapper<GradeDTO, Grade> {
 
-        if (grade.getTeacher() != null)
-            gradeDTO.setTeacherShortName(grade.getTeacher().getShortName());
-            
-        return gradeDTO;
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    public GradeMapper() {
+        super(GradeDTO.class, Grade.class);
     }
 
-    public static Grade toEntity(GradeDTO gradeDTO, Teacher teacher) {
-        Grade grade = new Grade();
-        grade.setClassName(gradeDTO.getClassName());
-        grade.setStrength(gradeDTO.getStrength());
-        grade.setTeacher(teacher);
-        return grade;
+    @Override
+    protected void copyFieldsToDTO(Grade grade, GradeDTO gradeDTO) {
+        Optional.ofNullable(grade.getTeacher())
+                .map(teacher -> teacher.getShortName())
+                .ifPresent(gradeDTO::setTeacherShortName);
+    }
+
+    @Override
+    protected void copyFieldsToEntity(GradeDTO gradeDTO, Grade grade) {
+        grade.setTeacher(Optional.ofNullable(gradeDTO.getTeacherShortName())
+                .filter(shortName -> !shortName.isBlank())
+                .map(teacherRepository::findByShortName)
+                .orElse(null));
     }
 }

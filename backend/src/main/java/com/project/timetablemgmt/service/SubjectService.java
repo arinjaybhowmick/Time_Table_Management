@@ -22,16 +22,19 @@ public class SubjectService {
     @Autowired
     private SubjectRepository repository;
 
+    @Autowired
+    private SubjectMapper subjectMapper;
+
     public List<SubjectDTO> getAll() {
         List<Subject> subjects = repository.findAll();
         return subjects.stream()
-                   .map(SubjectMapper::toDTO)
+                   .map(subjectMapper::convertEntitytoDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<SubjectDTO> getById(Long id) {
         Optional<Subject> optionalSubject = repository.findById(id);
-        return optionalSubject.map(SubjectMapper::toDTO);
+        return optionalSubject.map(subjectMapper::convertEntitytoDTO);
     }
 
     public SubjectDTO create(SubjectDTO subjectDTO) throws InvalidAttributeValueException {
@@ -39,14 +42,14 @@ public class SubjectService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
 
-        Subject subject = SubjectMapper.toEntity(subjectDTO);
+        Subject subject = subjectMapper.convertDTOtoEntity(subjectDTO);
         try{
             subject = repository.save(subject);
         }
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
         }
-        return SubjectMapper.toDTO(subject);
+        return subjectMapper.convertEntitytoDTO(subject);
     }
 
     public SubjectDTO update(Long id, SubjectDTO subjectDTO) throws InvalidAttributeValueException {
@@ -54,7 +57,7 @@ public class SubjectService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Subject subject = SubjectMapper.toEntity(subjectDTO);    
+        Subject subject = subjectMapper.convertDTOtoEntity(subjectDTO);    
         subject.setId(id);
         try{
             subject = repository.save(subject);
@@ -62,7 +65,7 @@ public class SubjectService {
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getMessage(), null);
         }
-        return SubjectMapper.toDTO(subject);
+        return subjectMapper.convertEntitytoDTO(subject);
     }
 
     public SubjectDTO delete(Long id) {
