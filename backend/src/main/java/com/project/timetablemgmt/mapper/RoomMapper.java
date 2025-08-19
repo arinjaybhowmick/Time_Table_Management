@@ -1,28 +1,37 @@
 package com.project.timetablemgmt.mapper;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.project.timetablemgmt.dto.RoomDTO;
-import com.project.timetablemgmt.entity.Grade;
 import com.project.timetablemgmt.entity.Room;
+import com.project.timetablemgmt.framework.AbstractMapper;
+import com.project.timetablemgmt.repository.GradeRepository;
 
-public class RoomMapper {
-    public static RoomDTO toDTO(Room room) {
-        RoomDTO roomDTO = new RoomDTO();
-        roomDTO.setRoomNumber(room.getRoomNumber());
-        roomDTO.setDisplayName(room.getDisplayName());
-        roomDTO.setCapacity(room.getCapacity());
+@Component
+public class RoomMapper extends AbstractMapper<RoomDTO, Room> {
 
-        if (room.getGrade() != null)
-            roomDTO.setClassName(room.getGrade().getClassName());
-            
-        return roomDTO;
+    @Autowired
+    private GradeRepository gradeRepository;
+
+    public RoomMapper() {
+        super(RoomDTO.class, Room.class);
     }
 
-    public static Room toEntity(RoomDTO roomDTO, Grade grade) {
-        Room room = new Room();
-        room.setRoomNumber(roomDTO.getRoomNumber());
-        room.setDisplayName(roomDTO.getDisplayName());
-        room.setCapacity(roomDTO.getCapacity());
-        room.setGrade(grade);
-        return room;
+    @Override
+    protected void copyFieldsToDTO(Room room, RoomDTO roomDTO) {
+        Optional.ofNullable(room.getGrade())
+                .map(grade -> grade.getClassName())
+                .ifPresent(roomDTO::setClassName);
+    }
+
+    @Override
+    protected void copyFieldsToEntity(RoomDTO roomDTO, Room room) {
+        room.setGrade(Optional.ofNullable(roomDTO.getClassName())
+                .filter(className -> !className.isBlank())
+                .map(gradeRepository::findByClassName)
+                .orElse(null));
     }
 }

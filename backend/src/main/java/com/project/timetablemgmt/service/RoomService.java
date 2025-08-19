@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.timetablemgmt.dto.RoomDTO;
-import com.project.timetablemgmt.entity.Grade;
 import com.project.timetablemgmt.entity.Room;
 import com.project.timetablemgmt.mapper.RoomMapper;
-import com.project.timetablemgmt.repository.GradeRepository;
 import com.project.timetablemgmt.repository.RoomRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,18 +23,18 @@ public class RoomService {
     private RoomRepository roomRepository;
 
     @Autowired
-    private GradeRepository gradeRepository;
+    private RoomMapper roomMapper;
 
     public List<RoomDTO> getAll() {
         List<Room> rooms = roomRepository.findAll();
         return rooms.stream()
-                   .map(RoomMapper::toDTO)
+                   .map(roomMapper::convertEntitytoDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<RoomDTO> getById(Long id) {
         Optional<Room> optionalRoom = roomRepository.findById(id);
-        return optionalRoom.map(RoomMapper::toDTO);
+        return optionalRoom.map(roomMapper::convertEntitytoDTO);
     }
 
     public RoomDTO create(RoomDTO roomDTO) throws InvalidAttributeValueException {
@@ -47,17 +45,13 @@ public class RoomService {
         Room room;
 
         try{
-
-            Grade grade = (!roomDTO.getClassName().isEmpty()) ? 
-                                gradeRepository.findByClassName(roomDTO.getClassName()) : null;
-
-            room = RoomMapper.toEntity(roomDTO,grade);
+            room = roomMapper.convertDTOtoEntity(roomDTO);
             room = roomRepository.save(room);
         }
         catch(Exception ex){
             throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
-        return RoomMapper.toDTO(room);
+        return roomMapper.convertEntitytoDTO(room);
     }
 
     public RoomDTO update(Long id, RoomDTO roomDTO) throws InvalidAttributeValueException {
@@ -68,11 +62,7 @@ public class RoomService {
         Room room;    
         
         try{
-
-            Grade grade = (!roomDTO.getClassName().isEmpty()) ? 
-                                gradeRepository.findByClassName(roomDTO.getClassName()) : null;
-
-            room = RoomMapper.toEntity(roomDTO,grade);
+            room = roomMapper.convertDTOtoEntity(roomDTO);
             room.setId(id);
 
             room = roomRepository.save(room);
@@ -80,7 +70,7 @@ public class RoomService {
         catch(Exception ex){
             throw new EntityNotFoundException(ex.getLocalizedMessage());
         }
-        return RoomMapper.toDTO(room);
+        return roomMapper.convertEntitytoDTO(room);
     }
 
     public RoomDTO delete(Long id) {

@@ -1,40 +1,100 @@
 package com.project.timetablemgmt.mapper;
 
-import com.project.timetablemgmt.dto.TimetableDTO;
-import com.project.timetablemgmt.entity.Day;
-import com.project.timetablemgmt.entity.Grade;
-import com.project.timetablemgmt.entity.Period;
-import com.project.timetablemgmt.entity.Room;
-import com.project.timetablemgmt.entity.Teaches;
-import com.project.timetablemgmt.entity.Timetable;
+import java.util.Optional;
 
-public class TimetableMapper {
-    public static TimetableDTO toDTO(Timetable timetable) {
-        TimetableDTO timetableDTO = new TimetableDTO();
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.project.timetablemgmt.dto.TimetableDTO;
+import com.project.timetablemgmt.entity.Timetable;
+import com.project.timetablemgmt.framework.AbstractMapper;
+import com.project.timetablemgmt.repository.DayRepository;
+import com.project.timetablemgmt.repository.GradeRepository;
+import com.project.timetablemgmt.repository.PeriodRepository;
+import com.project.timetablemgmt.repository.RoomRepository;
+import com.project.timetablemgmt.repository.SubjectRepository;
+import com.project.timetablemgmt.repository.TeacherRepository;
+import com.project.timetablemgmt.repository.TeachesRepository;
+
+@Component
+public class TimetableMapper extends AbstractMapper<TimetableDTO, Timetable> {
+
+    @Autowired
+    private DayRepository dayRepository;
+
+    @Autowired
+    private PeriodRepository periodRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private GradeRepository gradeRepository;
+
+    @Autowired
+    private TeachesRepository teachesRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
+    private SubjectRepository subjectRepository;
+
+    public TimetableMapper() {
+        super(TimetableDTO.class, Timetable.class);
+    }
+
+    @Override
+    protected void copyFieldsToDTO(Timetable timetable, TimetableDTO timetableDTO) {
         timetableDTO.setDayShortName(timetable.getDay().getShortName());
         timetableDTO.setPeriodNumber(timetable.getPeriod().getPeriodNumber());
 
-        if (timetable.getRoom() != null)
-            timetableDTO.setRoomNumber(timetable.getRoom().getRoomNumber());
+        Optional.ofNullable(timetable.getRoom())
+                .map(room -> room.getRoomNumber())
+                .ifPresent(timetableDTO::setRoomNumber);
 
-        if (timetable.getGrade() != null)
-            timetableDTO.setClassName(timetable.getGrade().getClassName());
+        Optional.ofNullable(timetable.getGrade())
+                .map(grade -> grade.getClassName())
+                .ifPresent(timetableDTO::setClassName);
 
-        if (timetable.getTeaches() != null) {
-            timetableDTO.setTeacherShortName(timetable.getTeaches().getTeacher().getShortName());
-            timetableDTO.setSubjectCode(timetable.getTeaches().getSubject().getCode());
-        }
-        
-        return timetableDTO;
+        Optional.ofNullable(timetable.getTeaches()).ifPresent(teaches -> {
+            Optional.ofNullable(teaches.getTeacher())
+                    .map(teacher -> teacher.getShortName())
+                    .ifPresent(timetableDTO::setTeacherShortName);
+
+            Optional.ofNullable(teaches.getSubject())
+                    .map(subject -> subject.getCode())
+                    .ifPresent(timetableDTO::setSubjectCode);
+        });
     }
 
-    public static Timetable toEntity(Day day, Period period, Room room, Grade grade, Teaches teaches) {
-        Timetable timetable = new Timetable();
-        timetable.setDay(day);
-        timetable.setPeriod(period);
-        timetable.setRoom(room);
-        timetable.setGrade(grade);
-        timetable.setTeaches(teaches);
-        return timetable;
+    @Override
+    protected void copyFieldsToEntity(TimetableDTO timetableDTO, Timetable timetable) {
+        timetable.setDay(Optional.ofNullable(timetableDTO.getDayShortName())
+                .filter(day -> !day.isBlank())
+                .map(dayRepository::findByShortName)
+                .orElse(null));
+        
+        timetable.setPeriod(Optional.ofNullable(timetableDTO.getPeriodNumber())
+                .filter(period -> !period.isBlank())
+                .map(periodRepository::findByPeriodNumber)
+                .orElse(null));
+
+        timetable.setRoom(Optional.ofNullable(timetableDTO.getRoomNumber())
+                .filter(room -> !room.isBlank())
+                .map(roomRepository::findByRoomNumber)
+                .orElse(null));
+
+        timetable.setGrade(Optional.ofNullable(timetableDTO.getClassName())
+                .filter(grade -> !grade.isBlank())
+                .map(gradeRepository::findByClassName)
+                .orElse(null));
+
+        timetable.setTeaches(Optional.of(timetableDTO)
+                .filter(dto -> !dto.getTeacherShortName().isBlank() && !dto.getSubjectCode().isBlank())
+                .map(dto -> teachesRepository.findByTeacherAndSubject(
+                        teacherRepository.findByShortName(dto.getTeacherShortName()),
+                        subjectRepository.findByCode(dto.getSubjectCode())))
+                .orElse(null));
     }
 }

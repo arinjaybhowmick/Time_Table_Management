@@ -22,16 +22,19 @@ public class TeacherService {
     @Autowired
     private TeacherRepository repository;
 
+    @Autowired
+    private TeacherMapper teacherMapper;
+
     public List<TeacherDTO> getAll() {
         List<Teacher> teachers = repository.findAll();
         return teachers.stream()
-                   .map(TeacherMapper::toDTO)
+                   .map(teacherMapper::convertEntitytoDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<TeacherDTO> getById(Long id) {
         Optional<Teacher> optionalTeacher = repository.findById(id);
-        return optionalTeacher.map(TeacherMapper::toDTO);
+        return optionalTeacher.map(teacherMapper::convertEntitytoDTO);
     }
 
     public TeacherDTO create(TeacherDTO teacherDTO) throws InvalidAttributeValueException, ConstraintViolationException {
@@ -39,14 +42,14 @@ public class TeacherService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
 
-        Teacher teacher = TeacherMapper.toEntity(teacherDTO);
+        Teacher teacher = teacherMapper.convertDTOtoEntity(teacherDTO);
         try{
             teacher = repository.save(teacher);
         }
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
         }
-        return TeacherMapper.toDTO(teacher);
+        return teacherMapper.convertEntitytoDTO(teacher);
     }
 
     public TeacherDTO update(Long id, TeacherDTO teacherDTO) throws InvalidAttributeValueException, ConstraintViolationException {
@@ -54,7 +57,7 @@ public class TeacherService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Teacher teacher = TeacherMapper.toEntity(teacherDTO);    
+        Teacher teacher = teacherMapper.convertDTOtoEntity(teacherDTO);    
         teacher.setId(id);
         try{
             teacher = repository.save(teacher);
@@ -62,7 +65,7 @@ public class TeacherService {
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getMessage(), null);
         }
-        return TeacherMapper.toDTO(teacher);
+        return teacherMapper.convertEntitytoDTO(teacher);
     }
 
     public TeacherDTO delete(Long id) {

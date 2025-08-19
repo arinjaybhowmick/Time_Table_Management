@@ -22,16 +22,19 @@ public class DayService {
     @Autowired
     private DayRepository repository;
 
+    @Autowired
+    private DayMapper dayMapper;
+
     public List<DayDTO> getAll() {
         List<Day> days = repository.findAll();
         return days.stream()
-                   .map(DayMapper::toDTO)
+                   .map(dayMapper::convertEntitytoDTO)
                    .collect(Collectors.toList());
     }
 
     public Optional<DayDTO> getById(Short id) {
         Optional<Day> optionalDay = repository.findById(id);
-        return optionalDay.map(DayMapper::toDTO);
+        return optionalDay.map(dayMapper::convertEntitytoDTO);
     }
 
     public DayDTO create(DayDTO daydto) throws InvalidAttributeValueException {
@@ -39,14 +42,14 @@ public class DayService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
 
-        Day day = DayMapper.toEntity(daydto);
+        Day day = dayMapper.convertDTOtoEntity(daydto);
         try{
             day = repository.save(day);
         }
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
         }
-        return DayMapper.toDTO(day);
+        return dayMapper.convertEntitytoDTO(day);
     }
 
     public DayDTO update(Short id, DayDTO daydto) throws InvalidAttributeValueException {
@@ -54,7 +57,7 @@ public class DayService {
         if (msg != null) 
             throw new InvalidAttributeValueException(msg);
         
-        Day day = DayMapper.toEntity(daydto);    
+        Day day = dayMapper.convertDTOtoEntity(daydto);    
         day.setId(id);
         try{
             day = repository.save(day);
@@ -62,7 +65,7 @@ public class DayService {
         catch(Exception ex){
             throw new ConstraintViolationException(ex.getMessage(), null);
         }
-        return DayMapper.toDTO(day);
+        return dayMapper.convertEntitytoDTO(day);
     }
 
     public DayDTO delete(Short id) {

@@ -1,20 +1,16 @@
 package com.project.timetablemgmt.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.project.timetablemgmt.dto.DayDTO;
 import com.project.timetablemgmt.entity.Day;
+import com.project.timetablemgmt.framework.AbstractMapper;
 
-public class DayMapper {
-    public static DayDTO toDTO(Day day) {
-        DayDTO dto = new DayDTO();
-        dto.setDisplayName(day.getDisplayName());
-        dto.setShortName(day.getShortName());
-        return dto;
+@Component
+public class DayMapper extends AbstractMapper<DayDTO, Day> {
+
+    public DayMapper() {
+        super(DayDTO.class, Day.class);
     }
 
-    public static Day toEntity(DayDTO dto) {
-        Day day = new Day();
-        day.setDisplayName(dto.getDisplayName());
-        day.setShortName(dto.getShortName());
-        return day;
-    }
 }
