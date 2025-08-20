@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class SubjectService {
         return optionalSubject.map(subjectMapper::convertEntitytoDTO);
     }
 
-    public SubjectDTO create(SubjectDTO subjectDTO) throws InvalidAttributeValueException {
-        String msg = validateSubject(subjectDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public SubjectDTO create(SubjectDTO subjectDTO) {
         Subject subject = subjectMapper.convertDTOtoEntity(subjectDTO);
         try{
             subject = repository.save(subject);
@@ -52,11 +46,7 @@ public class SubjectService {
         return subjectMapper.convertEntitytoDTO(subject);
     }
 
-    public SubjectDTO update(Long id, SubjectDTO subjectDTO) throws InvalidAttributeValueException {
-        String msg = validateSubject(subjectDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public SubjectDTO update(Long id, SubjectDTO subjectDTO) {        
         Subject subject = subjectMapper.convertDTOtoEntity(subjectDTO);    
         subject.setId(id);
         try{
@@ -72,10 +62,5 @@ public class SubjectService {
         SubjectDTO subjectDTO = getById(id).orElse(null);
         repository.deleteById(id);
         return subjectDTO;
-    }
-
-    private String validateSubject(SubjectDTO subjectDTO) {
-        
-        return null;
     }
 }

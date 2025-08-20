@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class TeachesService {
         return optionalTeaches.map(teachesMapper::convertEntitytoDTO);
     }
 
-    public TeachesDTO create(TeachesDTO teachesDTO) throws InvalidAttributeValueException {
-        String msg = validateTeaches(teachesDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public TeachesDTO create(TeachesDTO teachesDTO) {
         Teaches teaches;
 
         try{
@@ -54,11 +48,7 @@ public class TeachesService {
         return teachesMapper.convertEntitytoDTO(teaches);
     }
 
-    public TeachesDTO update(Long id, TeachesDTO teachesDTO) throws InvalidAttributeValueException {
-        String msg = validateTeaches(teachesDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public TeachesDTO update(Long id, TeachesDTO teachesDTO) {        
         Teaches teaches;    
 
         try{
@@ -77,10 +67,5 @@ public class TeachesService {
         TeachesDTO teachesDTO = getById(id).orElse(null);
         teachesRepository.deleteById(id);
         return teachesDTO;
-    }
-
-    private String validateTeaches(TeachesDTO teachesDTO) {
-        
-        return null;
     }
 }

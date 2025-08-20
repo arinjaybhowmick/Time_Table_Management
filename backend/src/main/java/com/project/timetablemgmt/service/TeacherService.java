@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class TeacherService {
         return optionalTeacher.map(teacherMapper::convertEntitytoDTO);
     }
 
-    public TeacherDTO create(TeacherDTO teacherDTO) throws InvalidAttributeValueException, ConstraintViolationException {
-        String msg = validateTeacher(teacherDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public TeacherDTO create(TeacherDTO teacherDTO) {
         Teacher teacher = teacherMapper.convertDTOtoEntity(teacherDTO);
         try{
             teacher = repository.save(teacher);
@@ -52,11 +46,7 @@ public class TeacherService {
         return teacherMapper.convertEntitytoDTO(teacher);
     }
 
-    public TeacherDTO update(Long id, TeacherDTO teacherDTO) throws InvalidAttributeValueException, ConstraintViolationException {
-        String msg = validateTeacher(teacherDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public TeacherDTO update(Long id, TeacherDTO teacherDTO) {
         Teacher teacher = teacherMapper.convertDTOtoEntity(teacherDTO);    
         teacher.setId(id);
         try{
@@ -72,11 +62,5 @@ public class TeacherService {
         TeacherDTO teacherDTO = getById(id).orElse(null);
         repository.deleteById(id);
         return teacherDTO;
-    }
-
-    private String validateTeacher(TeacherDTO teacherDTO) {
-        if (!teacherDTO.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})*$"))
-            return "Invalid email format";
-        return null;
     }
 }

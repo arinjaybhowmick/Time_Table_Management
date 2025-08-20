@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class RoomService {
         return optionalRoom.map(roomMapper::convertEntitytoDTO);
     }
 
-    public RoomDTO create(RoomDTO roomDTO) throws InvalidAttributeValueException {
-        String msg = validateRoom(roomDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public RoomDTO create(RoomDTO roomDTO) {
         Room room;
 
         try{
@@ -54,11 +48,7 @@ public class RoomService {
         return roomMapper.convertEntitytoDTO(room);
     }
 
-    public RoomDTO update(Long id, RoomDTO roomDTO) throws InvalidAttributeValueException {
-        String msg = validateRoom(roomDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public RoomDTO update(Long id, RoomDTO roomDTO) {        
         Room room;    
         
         try{
@@ -77,10 +67,5 @@ public class RoomService {
         RoomDTO roomDTO = getById(id).orElse(null);
         roomRepository.deleteById(id);
         return roomDTO;
-    }
-
-    private String validateRoom(RoomDTO roomDTO) {
-        
-        return null;
     }
 }

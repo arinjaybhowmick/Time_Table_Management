@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.GradeDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.GradeService;
+import com.project.timetablemgmt.validator.GradeValidator;
 
 @RestController
 @RequestMapping("/api/grade")
@@ -26,6 +26,9 @@ public class GradeController {
     
     @Autowired
     private GradeService service;
+
+    @Autowired
+    private GradeValidator validator;
 
     @GetMapping
     public ResponseEntity<List<GradeDTO>> getAll() {
@@ -41,13 +44,17 @@ public class GradeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<GradeDTO> create(@RequestBody GradeDTO grade) throws InvalidAttributeValueException {
+    public ResponseEntity<GradeDTO> create(@RequestBody GradeDTO grade) throws AbstractException {
+        validator.validate(grade);
+
         GradeDTO createdGrade = service.create(grade);
         return new ResponseEntity<>(createdGrade, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GradeDTO> update(@PathVariable Long id, @RequestBody GradeDTO grade) throws InvalidAttributeValueException {
+    public ResponseEntity<GradeDTO> update(@PathVariable Long id, @RequestBody GradeDTO grade) throws AbstractException {
+        validator.validate(grade);
+
         GradeDTO updatedGrade = service.update(id, grade);
         return new ResponseEntity<>(updatedGrade, HttpStatus.OK);
     }

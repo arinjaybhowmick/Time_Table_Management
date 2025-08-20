@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.SubjectDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.SubjectService;
+import com.project.timetablemgmt.validator.SubjectValidator;
 
 @RestController
 @RequestMapping("/api/subject")
@@ -26,6 +26,9 @@ public class SubjectController {
     
     @Autowired
     private SubjectService service;
+
+    @Autowired
+    private SubjectValidator validator;
 
     @GetMapping
     public ResponseEntity<List<SubjectDTO>> getAll() {
@@ -41,13 +44,17 @@ public class SubjectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<SubjectDTO> create(@RequestBody SubjectDTO subject) throws InvalidAttributeValueException {
+    public ResponseEntity<SubjectDTO> create(@RequestBody SubjectDTO subject) throws AbstractException {
+        validator.validate(subject);
+
         SubjectDTO createdSubject = service.create(subject);
         return new ResponseEntity<>(createdSubject, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<SubjectDTO> update(@PathVariable Long id, @RequestBody SubjectDTO subject) throws InvalidAttributeValueException {
+    public ResponseEntity<SubjectDTO> update(@PathVariable Long id, @RequestBody SubjectDTO subject) throws AbstractException {
+        validator.validate(subject);
+
         SubjectDTO updatedSubject = service.update(id, subject);
         return new ResponseEntity<>(updatedSubject, HttpStatus.OK);
     }

@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.PeriodDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.PeriodService;
+import com.project.timetablemgmt.validator.PeriodValidator;
 
 @RestController
 @RequestMapping("/api/period")
@@ -26,6 +26,9 @@ public class PeriodController {
     
     @Autowired
     private PeriodService service;
+
+    @Autowired
+    private PeriodValidator validator;
 
     @GetMapping
     public ResponseEntity<List<PeriodDTO>> getAll() {
@@ -41,13 +44,17 @@ public class PeriodController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PeriodDTO> create(@RequestBody PeriodDTO period) throws InvalidAttributeValueException {
+    public ResponseEntity<PeriodDTO> create(@RequestBody PeriodDTO period) throws AbstractException {
+        validator.validate(period);
+        
         PeriodDTO createdPeriod = service.create(period);
         return new ResponseEntity<>(createdPeriod, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PeriodDTO> update(@PathVariable Short id, @RequestBody PeriodDTO period) throws InvalidAttributeValueException {
+    public ResponseEntity<PeriodDTO> update(@PathVariable Short id, @RequestBody PeriodDTO period) throws AbstractException {
+        validator.validate(period);
+
         PeriodDTO updatedPeriod = service.update(id, period);
         return new ResponseEntity<>(updatedPeriod, HttpStatus.OK);
     }

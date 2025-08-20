@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class DayService {
         return optionalDay.map(dayMapper::convertEntitytoDTO);
     }
 
-    public DayDTO create(DayDTO daydto) throws InvalidAttributeValueException {
-        String msg = validateDay(daydto);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public DayDTO create(DayDTO daydto) {
         Day day = dayMapper.convertDTOtoEntity(daydto);
         try{
             day = repository.save(day);
@@ -52,11 +46,7 @@ public class DayService {
         return dayMapper.convertEntitytoDTO(day);
     }
 
-    public DayDTO update(Short id, DayDTO daydto) throws InvalidAttributeValueException {
-        String msg = validateDay(daydto);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public DayDTO update(Short id, DayDTO daydto) {        
         Day day = dayMapper.convertDTOtoEntity(daydto);    
         day.setId(id);
         try{
@@ -72,11 +62,5 @@ public class DayService {
         DayDTO daydto = getById(id).orElse(null);
         repository.deleteById(id);
         return daydto;
-    }
-
-    private String validateDay(DayDTO daydto){
-        if (!daydto.getShortName().matches("^(MON|TUE|WED|THU|FRI|SAT|SUN)$")) 
-            return "Invalid Day Short Name";
-        return null;
     }
 }
