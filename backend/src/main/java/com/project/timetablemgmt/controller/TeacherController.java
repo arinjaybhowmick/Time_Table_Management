@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.TeacherDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.TeacherService;
+import com.project.timetablemgmt.validator.TeacherValidator;
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -26,6 +26,9 @@ public class TeacherController {
     
     @Autowired
     private TeacherService service;
+
+    @Autowired
+    private TeacherValidator validator;
 
     @GetMapping
     public ResponseEntity<List<TeacherDTO>> getAll() {
@@ -41,13 +44,17 @@ public class TeacherController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TeacherDTO> create(@RequestBody TeacherDTO teacher) throws InvalidAttributeValueException {
+    public ResponseEntity<TeacherDTO> create(@RequestBody TeacherDTO teacher) throws AbstractException {
+        validator.validate(teacher);
+
         TeacherDTO createdTeacher = service.create(teacher);
         return new ResponseEntity<>(createdTeacher, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<TeacherDTO> update(@PathVariable Long id, @RequestBody TeacherDTO teacher) throws InvalidAttributeValueException {
+    public ResponseEntity<TeacherDTO> update(@PathVariable Long id, @RequestBody TeacherDTO teacher) throws AbstractException {
+        validator.validate(teacher);
+
         TeacherDTO updatedTeacher = service.update(id, teacher);
         return new ResponseEntity<>(updatedTeacher, HttpStatus.OK);
     }

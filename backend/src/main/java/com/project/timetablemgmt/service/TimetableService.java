@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class TimetableService {
         return optionalTimetable.map(timetableMapper::convertEntitytoDTO);
     }
 
-    public TimetableDTO create(TimetableDTO timetableDTO) throws InvalidAttributeValueException {
-        String msg = validateTimetable(timetableDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public TimetableDTO create(TimetableDTO timetableDTO) {
         Timetable timetable;
 
         try{
@@ -54,11 +48,7 @@ public class TimetableService {
         return timetableMapper.convertEntitytoDTO(timetable);
     }
 
-    public TimetableDTO update(Long id, TimetableDTO timetableDTO) throws InvalidAttributeValueException {
-        String msg = validateTimetable(timetableDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public TimetableDTO update(Long id, TimetableDTO timetableDTO) {
         Timetable timetable;    
         
         try{
@@ -77,10 +67,5 @@ public class TimetableService {
         TimetableDTO timetableDTO = getById(id).orElse(null);
         timetableRepository.deleteById(id);
         return timetableDTO;
-    }
-
-    private String validateTimetable(TimetableDTO timetableDTO) {
-        
-        return null;
     }
 }

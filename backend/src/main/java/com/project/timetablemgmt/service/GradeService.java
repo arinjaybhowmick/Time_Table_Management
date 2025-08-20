@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +35,7 @@ public class GradeService {
         return optionalGrade.map(gradeMapper::convertEntitytoDTO);
     }
 
-    public GradeDTO create(GradeDTO gradeDTO) throws InvalidAttributeValueException {
-        String msg = validateGrade(gradeDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-
+    public GradeDTO create(GradeDTO gradeDTO) {
         Grade grade;
         
         try{
@@ -54,11 +48,7 @@ public class GradeService {
         return gradeMapper.convertEntitytoDTO(grade);
     }
 
-    public GradeDTO update(Long id, GradeDTO gradeDTO) throws InvalidAttributeValueException {
-        String msg = validateGrade(gradeDTO);
-        if (msg != null) 
-            throw new InvalidAttributeValueException(msg);
-        
+    public GradeDTO update(Long id, GradeDTO gradeDTO) {        
         Grade grade;    
         
         try{
@@ -77,10 +67,5 @@ public class GradeService {
         GradeDTO gradeDTO = getById(id).orElse(null);
         gradeRepository.deleteById(id);
         return gradeDTO;
-    }
-
-    private String validateGrade(GradeDTO gradeDTO) {
-        
-        return null;
     }
 }

@@ -1,11 +1,11 @@
 package com.project.timetablemgmt.controller;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.project.timetablemgmt.exception.ValidationException;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -13,9 +13,9 @@ import jakarta.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class ExceptionController {
 
-    @ExceptionHandler(InvalidAttributeValueException.class)
-    public ResponseEntity<String> handleInvalidAttributeValueException(InvalidAttributeValueException ex) {
-        return new ResponseEntity<>("Invalid Attribute Value Exception: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> handleValidationException(ValidationException ex) {
+        return new ResponseEntity<>("Validation Exception: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

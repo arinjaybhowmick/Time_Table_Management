@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.RoomDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.RoomService;
+import com.project.timetablemgmt.validator.RoomValidator;
 
 @RestController
 @RequestMapping("/api/room")
@@ -26,6 +26,9 @@ public class RoomController {
     
     @Autowired
     private RoomService service;
+
+    @Autowired
+    private RoomValidator validator;
 
     @GetMapping
     public ResponseEntity<List<RoomDTO>> getAll() {
@@ -41,13 +44,17 @@ public class RoomController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<RoomDTO> create(@RequestBody RoomDTO room) throws InvalidAttributeValueException {
+    public ResponseEntity<RoomDTO> create(@RequestBody RoomDTO room) throws AbstractException {
+        validator.validate(room);
+        
         RoomDTO createdRoom = service.create(room);
         return new ResponseEntity<>(createdRoom, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<RoomDTO> update(@PathVariable Long id, @RequestBody RoomDTO room) throws InvalidAttributeValueException {
+    public ResponseEntity<RoomDTO> update(@PathVariable Long id, @RequestBody RoomDTO room) throws AbstractException {
+        validator.validate(room);
+
         RoomDTO updatedRoom = service.update(id, room);
         return new ResponseEntity<>(updatedRoom, HttpStatus.OK);
     }

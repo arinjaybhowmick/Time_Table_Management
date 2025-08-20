@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.TimetableDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.TimetableService;
+import com.project.timetablemgmt.validator.TimetableValidator;
 
 @RestController
 @RequestMapping("/api/timetable")
@@ -26,6 +26,9 @@ public class TimetableController {
     
     @Autowired
     private TimetableService service;
+
+    @Autowired
+    private TimetableValidator validator;
 
     @GetMapping
     public ResponseEntity<List<TimetableDTO>> getAll() {
@@ -41,13 +44,17 @@ public class TimetableController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<TimetableDTO> create(@RequestBody TimetableDTO timetable) throws InvalidAttributeValueException {
+    public ResponseEntity<TimetableDTO> create(@RequestBody TimetableDTO timetable) throws AbstractException {
+        validator.validate(timetable);
+        
         TimetableDTO createdTimetable = service.create(timetable);
         return new ResponseEntity<>(createdTimetable, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<TimetableDTO> update(@PathVariable Long id, @RequestBody TimetableDTO timetable) throws InvalidAttributeValueException {
+    public ResponseEntity<TimetableDTO> update(@PathVariable Long id, @RequestBody TimetableDTO timetable) throws AbstractException {
+        validator.validate(timetable);
+
         TimetableDTO updatedTimetable = service.update(id, timetable);
         return new ResponseEntity<>(updatedTimetable, HttpStatus.OK);
     }

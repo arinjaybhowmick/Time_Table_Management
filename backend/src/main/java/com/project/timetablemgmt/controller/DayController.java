@@ -3,8 +3,6 @@ package com.project.timetablemgmt.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.InvalidAttributeValueException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.timetablemgmt.dto.DayDTO;
+import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.service.DayService;
+import com.project.timetablemgmt.validator.DayValidator;
 
 @RestController
 @RequestMapping("/api/day")
@@ -26,6 +26,9 @@ public class DayController {
     
     @Autowired
     private DayService service;
+
+    @Autowired
+    private DayValidator validator;
 
     @GetMapping
     public ResponseEntity<List<DayDTO>> getAll() {
@@ -41,13 +44,17 @@ public class DayController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<DayDTO> create(@RequestBody DayDTO day) throws InvalidAttributeValueException {
+    public ResponseEntity<DayDTO> create(@RequestBody DayDTO day) throws AbstractException {
+        validator.validate(day);
+
         DayDTO createdDay = service.create(day);
         return new ResponseEntity<>(createdDay, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<DayDTO> update(@PathVariable Short id, @RequestBody DayDTO day) throws InvalidAttributeValueException {
+    public ResponseEntity<DayDTO> update(@PathVariable Short id, @RequestBody DayDTO day) throws AbstractException {
+        validator.validate(day);
+
         DayDTO updatedDay = service.update(id, day);
         return new ResponseEntity<>(updatedDay, HttpStatus.OK);
     }
