@@ -1,66 +1,14 @@
 package com.project.timetablemgmt.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.project.timetablemgmt.dto.DayDTO;
 import com.project.timetablemgmt.entity.Day;
+import com.project.timetablemgmt.framework.AbstractService;
 import com.project.timetablemgmt.mapper.DayMapper;
 import com.project.timetablemgmt.repository.DayRepository;
 
-import jakarta.validation.ConstraintViolationException;
-
 @Service
-public class DayService {
-    
-    @Autowired
-    private DayRepository repository;
+public class DayService extends AbstractService<Short, DayDTO, Day, DayRepository, DayMapper> {
 
-    @Autowired
-    private DayMapper dayMapper;
-
-    public List<DayDTO> getAll() {
-        List<Day> days = repository.findAll();
-        return days.stream()
-                   .map(dayMapper::convertEntitytoDTO)
-                   .collect(Collectors.toList());
-    }
-
-    public Optional<DayDTO> getById(Short id) {
-        Optional<Day> optionalDay = repository.findById(id);
-        return optionalDay.map(dayMapper::convertEntitytoDTO);
-    }
-
-    public DayDTO create(DayDTO daydto) {
-        Day day = dayMapper.convertDTOtoEntity(daydto);
-        try{
-            day = repository.save(day);
-        }
-        catch(Exception ex){
-            throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
-        }
-        return dayMapper.convertEntitytoDTO(day);
-    }
-
-    public DayDTO update(Short id, DayDTO daydto) {        
-        Day day = dayMapper.convertDTOtoEntity(daydto);    
-        day.setId(id);
-        try{
-            day = repository.save(day);
-        }
-        catch(Exception ex){
-            throw new ConstraintViolationException(ex.getMessage(), null);
-        }
-        return dayMapper.convertEntitytoDTO(day);
-    }
-
-    public DayDTO delete(Short id) {
-        DayDTO daydto = getById(id).orElse(null);
-        repository.deleteById(id);
-        return daydto;
-    }
 }

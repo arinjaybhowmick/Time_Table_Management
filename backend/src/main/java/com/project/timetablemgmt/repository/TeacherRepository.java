@@ -1,10 +1,9 @@
 package com.project.timetablemgmt.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.project.timetablemgmt.entity.Teacher;
+import com.project.timetablemgmt.framework.BaseRepository;
 
-public interface TeacherRepository extends JpaRepository<Teacher, Long> {
+public interface TeacherRepository extends BaseRepository<Long, Teacher> {
 
     Teacher findByShortName(String shortName);
 }

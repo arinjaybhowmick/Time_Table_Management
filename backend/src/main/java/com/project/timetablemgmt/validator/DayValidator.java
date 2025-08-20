@@ -4,10 +4,11 @@ import org.springframework.stereotype.Component;
 
 import com.project.timetablemgmt.dto.DayDTO;
 import com.project.timetablemgmt.framework.AbstractException;
+import com.project.timetablemgmt.framework.BaseValidator;
 import com.project.timetablemgmt.utils.ValidatorUtils;
 
 @Component
-public class DayValidator {
+public class DayValidator implements BaseValidator<DayDTO> {
 
     public void validate(DayDTO dto) throws AbstractException {
         ValidatorUtils.validateFieldRegex(dto.getShortName(),

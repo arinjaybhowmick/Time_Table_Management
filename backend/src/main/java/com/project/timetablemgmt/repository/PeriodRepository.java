@@ -1,10 +1,9 @@
 package com.project.timetablemgmt.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.project.timetablemgmt.entity.Period;
+import com.project.timetablemgmt.framework.BaseRepository;
 
-public interface PeriodRepository extends JpaRepository<Period, Short> {
-   
+public interface PeriodRepository extends BaseRepository<Short, Period> {
+
     Period findByPeriodNumber(String periodNumber);
 }
