@@ -1,25 +1,22 @@
 package com.project.timetablemgmt.entity;
 
+import com.project.timetablemgmt.framework.BaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "TT_PERIOD")
-public class Period {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short id;
+public class Period extends BaseEntity<Short> {
     
     @Column(name = "period_number", length = 2, nullable = false, unique = true)
     private String periodNumber;

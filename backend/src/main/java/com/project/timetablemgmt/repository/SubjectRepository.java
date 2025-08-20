@@ -1,10 +1,9 @@
 package com.project.timetablemgmt.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.project.timetablemgmt.entity.Subject;
+import com.project.timetablemgmt.framework.BaseRepository;
 
-public interface SubjectRepository extends JpaRepository<Subject, Long> {
+public interface SubjectRepository extends BaseRepository<Long, Subject> {
 
     Subject findByCode(String code);
 }

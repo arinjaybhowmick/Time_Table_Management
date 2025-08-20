@@ -1,10 +1,9 @@
 package com.project.timetablemgmt.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.project.timetablemgmt.entity.Grade;
+import com.project.timetablemgmt.framework.BaseRepository;
 
-public interface GradeRepository extends JpaRepository<Grade, Long> {
+public interface GradeRepository extends BaseRepository<Long, Grade> {
 
     Grade findByClassName(String className);
 }

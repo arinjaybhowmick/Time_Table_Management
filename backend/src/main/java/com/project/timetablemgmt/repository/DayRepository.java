@@ -1,10 +1,9 @@
 package com.project.timetablemgmt.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.project.timetablemgmt.entity.Day;
+import com.project.timetablemgmt.framework.BaseRepository;
 
-public interface DayRepository extends JpaRepository<Day, Short> {
-    
+public interface DayRepository extends BaseRepository<Short, Day> {
+
     Day findByShortName(String shortName);
 }
