@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import jakarta.validation.ConstraintViolationException;
+import com.project.timetablemgmt.exception.DatabaseException;
+import com.project.timetablemgmt.exception.NotFoundException;
 
 /**
  * Abstract base service class providing implementation of {@link BaseService}.
@@ -33,11 +34,27 @@ public abstract class AbstractService<I extends Number, D, E extends BaseEntity<
     private M mapper;
 
     /**
+     * Creates a new entity from the given DTO.
+     *
+     * @param dto the DTO to create the entity from
+     * @return the created DTO after persisting
+     */
+    public D create(D dto) throws AbstractException {
+        E entity = mapper.convertDTOtoEntity(dto);
+        try {
+            entity = repository.save(entity);
+        } catch (Exception ex) {
+            throw new DatabaseException(ex.getLocalizedMessage());
+        }
+        return mapper.convertEntitytoDTO(entity);
+    }
+
+    /**
      * Retrieves all entities.
      *
      * @return a list of DTOs representing all entities
      */
-    public List<D> getAll() {
+    public List<D> read() throws AbstractException {
         List<E> entity = repository.findAll();
         return entity.stream()
                 .map(mapper::convertEntitytoDTO)
@@ -45,60 +62,61 @@ public abstract class AbstractService<I extends Number, D, E extends BaseEntity<
     }
 
     /**
-     * Retrieves an entity by its ID.
+     * Retrieves an existing entity from the given DTO.
      *
-     * @param id the identifier of the entity
-     * @return an {@link Optional} containing the DTO if found
+     * @param dto the DTO containing partial data
+     * @return the DTO of the existing entity
      */
-    public Optional<D> getById(I id) {
-        Optional<E> entity = repository.findById(id);
-        return entity.map(mapper::convertEntitytoDTO);
-    }
-
-    /**
-     * Creates a new entity from the given DTO.
-     *
-     * @param dto the DTO to create the entity from
-     * @return the created DTO after persisting
-     */
-    public D create(D dto) {
+    public D read(D dto) throws AbstractException {
         E entity = mapper.convertDTOtoEntity(dto);
-        try {
-            entity = repository.save(entity);
-        } catch (Exception ex) {
-            throw new ConstraintViolationException(ex.getLocalizedMessage(), null);
-        }
+
+        Optional<E> foundEntity = repository.findByEntity(entity);
+        foundEntity.orElseThrow(() -> new NotFoundException("Entity not present"));
+
+        entity = foundEntity.get();
         return mapper.convertEntitytoDTO(entity);
     }
 
     /**
-     * Updates an existing entity with the given ID.
+     * Updates an existing entity from the given DTO.
      *
-     * @param id  the identifier of the entity to update
      * @param dto the DTO containing updated data
      * @return the updated DTO
      */
-    public D update(I id, D dto) {
+    public D update(D dto) throws AbstractException {
         E entity = mapper.convertDTOtoEntity(dto);
-        entity.setId(id);
+
+        Optional<E> foundEntity = repository.findByEntity(entity);
+        foundEntity.orElseThrow(() -> new NotFoundException("Entity not present"));
+
         try {
+            entity.setId(foundEntity.get().getId());
             entity = repository.save(entity);
         } catch (Exception ex) {
-            throw new ConstraintViolationException(ex.getMessage(), null);
+            throw new DatabaseException(ex.getMessage());
         }
         return mapper.convertEntitytoDTO(entity);
     }
 
     /**
-     * Deletes an entity by its ID.
+     * Deletes an entity of the given DTO.
      *
-     * @param id the identifier of the entity to delete
+     * @param dto the DTO containing data to delete
      * @return the DTO of the deleted entity
      */
-    public D delete(I id) {
-        D dto = getById(id).orElse(null);
-        repository.deleteById(id);
-        return dto;
+    public D delete(D dto) throws AbstractException {
+        E entity = mapper.convertDTOtoEntity(dto);
+
+        Optional<E> foundEntity = repository.findByEntity(entity);
+        foundEntity.orElseThrow(() -> new NotFoundException("Entity not present"));
+
+        try {
+            entity = foundEntity.get();
+            repository.deleteById(entity.getId());
+        } catch (Exception ex) {
+            throw new DatabaseException(ex.getMessage());
+        }
+        return mapper.convertEntitytoDTO(entity);
     }
 
 }

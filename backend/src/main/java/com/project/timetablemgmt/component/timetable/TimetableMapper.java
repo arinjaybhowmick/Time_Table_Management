@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import com.project.timetablemgmt.component.day.DayRepository;
 import com.project.timetablemgmt.component.grade.GradeRepository;
@@ -89,10 +90,12 @@ public class TimetableMapper extends AbstractMapper<TimetableDTO, Timetable> {
                 .orElse(null));
 
         timetable.setTeaches(Optional.of(timetableDTO)
-                .filter(dto -> !dto.getTeacherShortName().isBlank() && !dto.getSubjectCode().isBlank())
-                .map(dto -> teachesRepository.findByTeacherAndSubject(
-                        teacherRepository.findByShortName(dto.getTeacherShortName()),
-                        subjectRepository.findByCode(dto.getSubjectCode())))
-                .orElse(null));
-    }
+                        .filter(dto -> !ObjectUtils.isEmpty(dto.getTeacherShortName())
+                                        && !ObjectUtils.isEmpty(dto.getSubjectCode()))
+                        .filter(dto -> !dto.getTeacherShortName().isBlank() && !dto.getSubjectCode().isBlank())
+                        .map(dto -> teachesRepository.findByTeacherAndSubject(
+                                        teacherRepository.findByShortName(dto.getTeacherShortName()),
+                                        subjectRepository.findByCode(dto.getSubjectCode())))
+                        .orElse(null));
+}
 }

@@ -1,7 +1,6 @@
 package com.project.timetablemgmt.framework;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Base service interface defining standard operations.
@@ -13,19 +12,19 @@ import java.util.Optional;
  */
 public interface BaseService<I extends Number, D> {
 
-    /** Returns all DTOs. */
-    List<D> getAll();
+    /** Creates a new record. */
+    D create(D dto) throws AbstractException;
 
-    /** Returns a DTO by its ID. */
-    Optional<D> getById(I id);
+    /** Returns all records. */
+    List<D> read() throws AbstractException;
 
-    /** Creates a new DTO. */
-    D create(D dto);
+    /** Returns an existing record. */
+    D read(D dto) throws AbstractException;
 
-    /** Updates an existing DTO by ID. */
-    D update(I id, D dto);
+    /** Updates an existing record. */
+    D update(D dto) throws AbstractException;
 
-    /** Deletes a DTO by ID. */
-    D delete(I id);
+    /** Deletes an existing record. */
+    D delete(D dto) throws AbstractException;
 
 }
