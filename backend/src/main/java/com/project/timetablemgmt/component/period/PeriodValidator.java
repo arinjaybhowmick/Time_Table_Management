@@ -2,9 +2,9 @@ package com.project.timetablemgmt.component.period;
 
 import org.springframework.stereotype.Component;
 
-import com.project.timetablemgmt.component.utility.ValidatorUtils;
 import com.project.timetablemgmt.framework.AbstractException;
 import com.project.timetablemgmt.framework.BaseValidator;
+import com.project.timetablemgmt.utility.ValidatorUtils;
 
 @Component
 public class PeriodValidator implements BaseValidator<PeriodDTO> {
