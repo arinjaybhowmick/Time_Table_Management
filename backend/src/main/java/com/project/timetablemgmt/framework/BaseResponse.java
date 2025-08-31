@@ -57,6 +57,20 @@ public class BaseResponse<T> extends ResponseEntity<ResponseTemplate<T>> {
         return new BaseResponse<>(status, Collections.emptyList(), error);
     }
 
+    /**
+     * Creates a partial success response with
+     * the given status, data, and error messages.
+     *
+     * @param status the HTTP status code
+     * @param data   the list of data items
+     * @param <T>    the type of the data
+     * @param error  the error message
+     * @return a {@code BaseResponse} representing a partial success result
+     */
+    public static <T> BaseResponse<T> partial(HttpStatus status, List<T> data, String error) {
+        return new BaseResponse<>(status, data != null ? data : Collections.emptyList(), error);
+    }
+
 }
 
 /**

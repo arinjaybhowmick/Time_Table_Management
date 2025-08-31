@@ -24,6 +24,16 @@ public class ExceptionController {
         return BaseResponse.failure(HttpStatus.CONFLICT, "Database Exception: " + ex.getMessage());
     }
 
+    @ExceptionHandler(NoDataException.class)
+    public BaseResponse<String> handleNoDataException(NoDataException ex) {
+        return BaseResponse.failure(HttpStatus.BAD_REQUEST, "No Data Exception: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(CompositeException.class)
+    public BaseResponse<String> handleCompositeException(CompositeException ex) {
+        return BaseResponse.failure(HttpStatus.BAD_REQUEST, "Composite Exception: " + ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public BaseResponse<String> handleException(Exception ex) {
         return BaseResponse.failure(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred: " + ex.getMessage());

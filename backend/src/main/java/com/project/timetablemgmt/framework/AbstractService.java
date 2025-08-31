@@ -44,7 +44,7 @@ public abstract class AbstractService<I extends Number, D, E extends BaseEntity<
         try {
             entity = repository.save(entity);
         } catch (Exception ex) {
-            throw new DatabaseException(ex.getLocalizedMessage());
+            throw new DatabaseException(ex.getClass().getSimpleName());
         }
         return mapper.convertEntitytoDTO(entity);
     }
@@ -93,7 +93,7 @@ public abstract class AbstractService<I extends Number, D, E extends BaseEntity<
             entity.setId(foundEntity.get().getId());
             entity = repository.save(entity);
         } catch (Exception ex) {
-            throw new DatabaseException(ex.getMessage());
+            throw new DatabaseException(ex.getClass().getSimpleName());
         }
         return mapper.convertEntitytoDTO(entity);
     }
@@ -114,7 +114,7 @@ public abstract class AbstractService<I extends Number, D, E extends BaseEntity<
             entity = foundEntity.get();
             repository.deleteById(entity.getId());
         } catch (Exception ex) {
-            throw new DatabaseException(ex.getMessage());
+            throw new DatabaseException(ex.getClass().getSimpleName());
         }
         return mapper.convertEntitytoDTO(entity);
     }
