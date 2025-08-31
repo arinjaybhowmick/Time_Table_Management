@@ -9,7 +9,15 @@ import com.project.timetablemgmt.utility.ValidatorUtils;
 @Component
 public class PeriodValidator implements BaseValidator<PeriodDTO> {
 
-    public void validate(PeriodDTO dto) throws AbstractException {
+    @Override
+    public void mandatory(PeriodDTO dto) throws AbstractException {
+        ValidatorUtils.validateNotNull(dto.getPeriodNumber(), "Mandatory Period Number");
+        ValidatorUtils.validateNotNull(dto.getStartTime(), "Mandatory Period Start Time");
+        ValidatorUtils.validateNotNull(dto.getEndTime(), "Mandatory Period End Time");
+    }
+
+    @Override
+    public void specific(PeriodDTO dto) throws AbstractException {
         ValidatorUtils.validateFieldRegex(dto.getStartTime(),
                 "^(0[0-9]|1[0-9]|2[0-3])[0-5][0-9]$", "Start time must be in 24-hour format");
 

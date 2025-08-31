@@ -9,7 +9,14 @@ import com.project.timetablemgmt.utility.ValidatorUtils;
 @Component
 public class DayValidator implements BaseValidator<DayDTO> {
 
-    public void validate(DayDTO dto) throws AbstractException {
+    @Override
+    public void mandatory(DayDTO dto) throws AbstractException {
+        ValidatorUtils.validateNotNull(dto.getShortName(), "Mandatory Day Short Name");
+        ValidatorUtils.validateNotNull(dto.getDisplayName(), "Mandatory Day Display Name");
+    }
+
+    @Override
+    public void specific(DayDTO dto) throws AbstractException {
         ValidatorUtils.validateFieldRegex(dto.getShortName(),
                 "^(MON|TUE|WED|THU|FRI|SAT|SUN)$", "Invalid Day Short Name");
     }
