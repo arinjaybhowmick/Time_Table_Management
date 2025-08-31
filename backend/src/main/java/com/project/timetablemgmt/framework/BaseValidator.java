@@ -7,7 +7,16 @@ package com.project.timetablemgmt.framework;
  */
 public interface BaseValidator<D> {
 
-    /** Validates the given DTO. */
-    void validate(D dto) throws AbstractException;
+    /** Validation */
+    default void validate(D dto) throws AbstractException {
+        mandatory(dto);
+        specific(dto);
+    }
+
+    /** Mandatory Validation */
+    void mandatory(D dto) throws AbstractException;
+
+    /** Specific Validation */
+    void specific(D dto) throws AbstractException;
 
 }
