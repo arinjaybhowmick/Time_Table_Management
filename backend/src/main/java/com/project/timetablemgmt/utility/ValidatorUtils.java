@@ -1,4 +1,4 @@
-package com.project.timetablemgmt.component.utility;
+package com.project.timetablemgmt.utility;
 
 import com.project.timetablemgmt.exception.ValidationException;
 import com.project.timetablemgmt.framework.AbstractException;
